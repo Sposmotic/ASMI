@@ -104,7 +104,7 @@ for dataset_idx = 1:length(target_datasets)
                     ind = inds{run};
 
                     tic;
-                    scLabel = ASIM(dataViews, ind, k, m, M);
+                    scLabel = ASMI(dataViews, ind, k, m, M);
                     elapsedTime = toc;
 
                     metrics = Clustering8Measure(scLabel, label);
@@ -143,7 +143,7 @@ for dataset_idx = 1:length(target_datasets)
                 ind = inds{run};
 
                 tic;
-                scLabel = ASIM(dataViews, ind, best_params.k, best_params.m, M);
+                scLabel = ASMI(dataViews, ind, best_params.k, best_params.m, M);
                 elapsedTime = toc;
 
                 metrics = Clustering8Measure(scLabel, label);
