@@ -1,44 +1,44 @@
 function [AR,RI,MI,HI] = RandIndex(c1, c2)
-%RANDINDEX - 计算 Rand 指数以比较两个划分
-%   ARI = RANDINDEX(c1, c2)，其中 c1 和 c2 是表示类别成员的向量，
-%   返回 "Hubert & Arabie 调整后的 Rand 指数"。
-%   [AR, RI, MI, HI] = RANDINDEX(c1, c2) 返回调整后的 Rand 指数、未调整的 Rand 指数、
-%   "Mirkin 指数" 和 "Hubert 指数"。
+%RANDINDEX - Calculate Rand indices to compare two partitions
+%   ARI = RANDINDEX(c1, c2), where c1 and c2 are vectors representing class memberships,
+%   returns the "Hubert & Arabie Adjusted Rand Index".
+%   [AR, RI, MI, HI] = RANDINDEX(c1, c2) returns the Adjusted Rand Index, unadjusted Rand Index,
+%   "Mirkin Index", and "Hubert Index".
 %
-%   参见 L. Hubert 和 P. Arabie (1985) "Comparing Partitions"，《分类学期刊》2:193-218。
+%   See: L. Hubert and P. Arabie (1985) "Comparing Partitions", Journal of Classification 2:193-218.
 %
 %   (C) David Corney (2000)     D.Corney@cs.ucl.ac.uk
 
-% 检查输入参数的合法性，要求 c1 和 c2 为向量且维度为 1
+% Validate input arguments - both must be 1D vectors
 if nargin < 2 || min(size(c1)) > 1 || min(size(c2)) > 1
    error('RandIndex: Requires two vector arguments')
    return
 end
 
-% 计算列联矩阵（Contingency Matrix）
-C = Contingency(c1, c2); % 构造 c1 和 c2 的列联矩阵
+% Compute contingency matrix
+C = Contingency(c1, c2); % Construct contingency matrix for c1 and c2
 
-n = sum(sum(C));  % 样本总数（列联矩阵中所有元素的总和）
-nis = sum(sum(C, 2).^2);  % 每一行的元素和的平方之和
-njs = sum(sum(C, 1).^2);  % 每一列的元素和的平方之和
+n = sum(sum(C));  % Total number of samples (sum of all elements in contingency matrix)
+nis = sum(sum(C, 2).^2);  % Sum of squared row sums
+njs = sum(sum(C, 1).^2);  % Sum of squared column sums
 
-t1 = nchoosek(n, 2);  % 计算总的样本对数（从 n 个元素中选择 2 个元素的组合数）
-t2 = sum(sum(C.^2));  % 计算列联矩阵元素平方和
-t3 = 0.5 * (nis + njs);  % 计算行和列元素平方和的平均值
+t1 = nchoosek(n, 2);  % Calculate total number of sample pairs (combinations of 2 from n elements)
+t2 = sum(sum(C.^2));  % Sum of squared elements in contingency matrix
+t3 = 0.5 * (nis + njs);  % Average of squared row and column sums
 
-% 计算期望指数（用于调整）
+% Calculate expected index (for adjustment)
 nc = (n * (n^2 + 1) - (n + 1) * nis - (n + 1) * njs + 2 * (nis * njs) / n) / (2 * (n - 1));
 
-A = t1 + t2 - t3;  % 协议对数（相同划分的对数）
-D = -t2 + t3;  % 不协议对数（不同划分的对数）
+A = t1 + t2 - t3;  % Number of agreeing pairs (same partition)
+D = -t2 + t3;  % Number of disagreeing pairs (different partitions)
 
-% 计算调整后的 Rand 指数
+% Calculate Adjusted Rand Index
 if t1 == nc
-   AR = 0;  % 避免除以零的情况；如果 t1 = nc，定义 Rand = 0
+   AR = 0;  % Avoid division by zero; if t1 = nc, define Rand = 0
 else
-   AR = (A - nc) / (t1 - nc);  % 调整后的 Rand 指数 - Hubert & Arabie (1985)
+   AR = (A - nc) / (t1 - nc);  % Adjusted Rand Index - Hubert & Arabie (1985)
 end
 
-RI = A / t1;  % Rand 指数 1971 - 协议概率
-MI = D / t1;  % Mirkin 指数 1970 - 不协议概率
-HI = (A - D) / t1;  % Hubert 指数 1977 - 协议概率减去不协议概率
+RI = A / t1;  % Rand Index 1971 - Probability of agreement
+MI = D / t1;  % Mirkin Index 1970 - Probability of disagreement
+HI = (A - D) / t1;  % Hubert Index 1977 - Agreement minus disagreement probability
