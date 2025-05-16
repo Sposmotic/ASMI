@@ -1,5 +1,5 @@
-function Label = ASIM(dataViews, ind, k, m, M)
-% ASIM - Anchor Selection strategy with Missing Information
+function Label = ASMI(dataViews, ind, k, m, M)
+% ASMI - Anchor Selection strategy with Missing Information
 %
 % Inputs:
 %   dataViews - Cell array containing data matrices for each view (n×d_v)
